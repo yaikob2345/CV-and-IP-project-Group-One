@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>House Price Prediction</title>
+    <!-- Add your CSS styles or include external stylesheets here -->
+    <style>
+        /* Add your styles here */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color:rgb(9, 153, 28);
+            background-size: cover; /* Ensure the image covers the entire screen */
+            background-repeat: no-repeat; /* Prevent image from repeating */
+            background-position: center; /* Center the image */
+        }
+
+        header {
+            background-color:rgb(11, 3, 19);
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+        }
+
+        main {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color:rgb(204, 247, 243);
+            box-shadow: 1 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        footer {
+            text-align: center;
+            padding: 15px;
+            background-color: #333;
+            color: #fff;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            font-size: 29px;
+        }
+
+        /* Add styling for the form */
+        form {
+            margin-top: 30px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        select {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 16px;
+            font-weight: bold;
+        }
+
+        button {
+            background-color:rgb(18, 20, 13);
+            color: #ffffff;
+            padding: 10px;
+            border: none;
+            cursor: pointer;
+        }
+
+        /* Style for displaying the predicted price */
+        #predictedPrice {
+            margin-top: 25px;
+            font-weight: bold;
+            background-color:rgb(27, 22, 22);
+            color: #ffffff;
+        }
+    </style>
+</head>
+<body style="background-image: url('jinka.'); background-size: cover; background-position: center; background-repeat: no-repeat;">
+    <header>
+        <h1>Ethiopia House Price Prediction Using Machine Learning</h1>
+    </header>
+    <main>
+        <p> <b> Welcome to House Price Prediction Model! </B></p>
+
+        <!-- Form for input fields -->
+        
+<form id="predictionForm">
+    <label for="beds">Bedrooms:</label>
+    <select id="beds" name="beds">
+        <option value="" disabled selected>Select number of bedrooms</option>
+        {% for bedroom in bedrooms %}
+            <option value="{{ bedroom }}">{{ bedroom }}</option>
+        {% endfor %}
+    </select>
+
+    <label for="baths">Baths:</label>
+    <select id="baths" name="baths">
+        <option value="" disabled selected>Select number of bathrooms</option>
+        {% for bathroom in bathrooms %}
+            <option value="{{ bathroom }}">{{ bathroom }}</option>
+        {% endfor %}
+    </select>
+
+    <label for="size">Size:</label>
+    <select id="size" name="size">
+        <option value="" disabled selected>Select size of the house</option>
+        {% for house_size in sizes %}
+            <option value="{{ house_size }}">{{ house_size }} sqft</option>
+        {% endfor %}
+    </select>
+
+    <label for="zip_code">Zip Code:</label>
+    <select id="zip_code" name="zip_code">
+        <option value="" disabled selected>Select zip code</option>
+        {% for zip_code in zip_codes %}
+            <option value="{{ zip_code }}">{{ zip_code }}</option>
+        {% endfor %}
+    </select>
+
+    <!-- Predict Price button -->
+    <button type="button" onclick="sendData()">Predict Price</button>
+
+    <!-- Space for displaying predicted price -->
+    <div id="predictedPrice"></div>
+</form>
+
+    </main>
+    <footer>
+        <p>Designed By Group One Student, <i> Jinka University </i> <br> &copy; 2024 House Price Prediction. All rights reserved.</p>
+    </footer>
+    <!-- Add your JavaScript scripts or include external scripts here -->
+    <script>
+        // JavaScript function to fetch options for dropdowns
+        function fetchOptions(endpoint, dropdownId) {
+            fetch(endpoint)
+                .then(response => response.json())
+                .then(data => {
+                    const dropdown = document.getElementById(dropdownId);
+                    dropdown.innerHTML = '<option value="" disabled selected>Select an option</option>';
+                    data.forEach(option => {
+                        const optionElement = document.createElement('option');
+                        optionElement.value = option;
+                        optionElement.textContent = option;
+                        dropdown.appendChild(optionElement);
+                    });
+                });
+        }
+
+        // Fetch options for each dropdown on page load
+        window.onload = function() {
+            fetchOptions('/bedrooms', 'beds');
+            fetchOptions('/bathrooms', 'baths');
+            fetchOptions('/sizes', 'size');
+            fetchOptions('/zip_codes', 'zip_code');
+        };
+
+        // JavaScript function to send data and receive predicted price
+        function sendData() {
+            const form = document.getElementById('predictionForm');
+            const formData = new FormData(form);
+
+            fetch('/predict', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.text())
+            .then(price => {
+                document.getElementById("predictedPrice").innerHTML = "Price: ETB " + price;
+            });
+        }
+    </script>
+</body>
+</html>
